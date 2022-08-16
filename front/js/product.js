@@ -90,5 +90,5 @@ function addProductToCart(id, color, quantity){
     };
     //add to localstorage
     localStorage.setItem("cart", JSON.stringify(cart));
-    //console.log(cart);
+    console.log(cart);
 }
