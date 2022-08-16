@@ -1,7 +1,8 @@
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let singleProduct = [];
 let cartDisplaySection = document.getElementById("cart__items");
-
+let totalPrice = 0;
+let totalQuantity = 0;
 
 for (let i = 0; i < cart.length; i++){
     let id = cart[i].id;
@@ -18,8 +19,9 @@ function searchProductInfo(id, color, quantity){
         return response.json()
     })
     .then(function(product){
-        singleProduct = product;   
-        displayCart(id, color, quantity);     
+        singleProduct = product;
+        displayCart(id, color, quantity); 
+        getTotalPrice(quantity);    
         
     })
     .catch(function(error){
@@ -27,8 +29,9 @@ function searchProductInfo(id, color, quantity){
     })
 }
 
+
 function displayCart(id, color, quantity){
-    console.log(id, color, quantity, singleProduct.name, singleProduct.price);
+    //console.log(id, color, quantity, singleProduct.name, singleProduct.price);
     let newItemArticle = document.createElement("article");
     newItemArticle.classList.add("cart__item");
     newItemArticle.setAttribute("data-id", id);
@@ -93,7 +96,22 @@ function displayCart(id, color, quantity){
     newItemParagraphDelete.classList.add("deleteItem");
     newItemParagraphDelete.innerText = "Supprimer";
     newItemDivDelete.appendChild(newItemParagraphDelete);
-    
 
 }
+
+
+function getTotalPrice(quantity){
+    let totalQuantityDisplay = document.getElementById("totalQuantity");
+    let totalPriceDisplay = document.getElementById("totalPrice");
+
+    totalPrice += (singleProduct.price * quantity);
+    totalQuantity += quantity;
+
+    totalQuantityDisplay.innerText = totalQuantity;
+    totalPriceDisplay.innerText = totalPrice
+    //console.log(totalPrice + " - " + totalQuantity);
+
+
+}
+
 
