@@ -1,41 +1,35 @@
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-let singleProduct = [];
 let cartDisplaySection = document.getElementById("cart__items");
+let singleProduct = [];
 let totalPrice = 0;
 let totalQuantity = 0;
 
 for (let i = 0; i < cart.length; i++){
     let id = cart[i].id;
     let color = cart[i].color;
-    let quantity = cart[i].quantity;
-    //console.log (id + " - " + color + " - " + quantity);
-    searchProductInfo(id, color, quantity);
-}
+    let quantity = cart[i].quantity;     
 
-
-function searchProductInfo(id, color, quantity){
     fetch ("http://localhost:3000/api/products/" + id)
     .then(function(response){
         return response.json()
     })
     .then(function(product){
-        singleProduct = product;
-        displayCart(id, color, quantity); 
-        getTotalPrice(quantity);    
-        
+        const productInfo = {id: id, color: color, quantity: quantity, name: product.name, price: product.price, img: product.imageUrl, alt: product.altTxt};   
+        singleProduct.push(productInfo);
+        displayCart(singleProduct[i]);
+        getTotalPrice(singleProduct[i]);        
     })
     .catch(function(error){
         console.error(error);
     })
 }
 
-
-function displayCart(id, color, quantity){
-    //console.log(id, color, quantity, singleProduct.name, singleProduct.price);
+function displayCart(products){
+    //console.log(products.id);
     let newItemArticle = document.createElement("article");
     newItemArticle.classList.add("cart__item");
-    newItemArticle.setAttribute("data-id", id);
-    newItemArticle.setAttribute("data-color", color);
+    newItemArticle.setAttribute("data-id", products.id);
+    newItemArticle.setAttribute("data-color", products.color);
     cartDisplaySection.appendChild(newItemArticle);
 
     let newItemDivImg = document.createElement('div');
@@ -43,8 +37,8 @@ function displayCart(id, color, quantity){
     newItemArticle.appendChild(newItemDivImg);
 
     let newItemImg = document.createElement('img');
-    newItemImg.setAttribute("src", singleProduct.imageUrl);
-    newItemImg.setAttribute("alt", singleProduct.altTxt);
+    newItemImg.setAttribute("src", products.img);
+    newItemImg.setAttribute("alt", products.alt);
     newItemDivImg.appendChild(newItemImg);
 
     let newItemDivContent = document.createElement('div');
@@ -56,15 +50,15 @@ function displayCart(id, color, quantity){
     newItemDivContent.appendChild(newItemDivDescription);
 
     let newItemHeading = document.createElement("h2");
-    newItemHeading.innerText = singleProduct.name;
+    newItemHeading.innerText = products.name;
     newItemDivDescription.appendChild(newItemHeading);
 
     let newItemParagraphColor = document.createElement("p");
-    newItemParagraphColor.innerHTML = color;
+    newItemParagraphColor.innerHTML = products.color;
     newItemDivDescription.appendChild(newItemParagraphColor);
 
     let newItemParagraphPrice = document.createElement("p");
-    newItemParagraphPrice.innerHTML = singleProduct.price + " €";
+    newItemParagraphPrice.innerHTML = products.price + " €";
     newItemDivDescription.appendChild(newItemParagraphPrice);
 
     let newItemDivContentSetting = document.createElement('div');
@@ -85,7 +79,7 @@ function displayCart(id, color, quantity){
     newItemInputQuantity.setAttribute("name", "itemQuantity");
     newItemInputQuantity.setAttribute("min", "1");
     newItemInputQuantity.setAttribute("max", "100");
-    newItemInputQuantity.setAttribute("value", quantity);
+    newItemInputQuantity.setAttribute("value", products.quantity);
     newItemDivQuantity.appendChild(newItemInputQuantity);
 
     let newItemDivDelete = document.createElement("div");
@@ -97,21 +91,33 @@ function displayCart(id, color, quantity){
     newItemParagraphDelete.innerText = "Supprimer";
     newItemDivDelete.appendChild(newItemParagraphDelete);
 
+    checkButtonDelete(newItemParagraphDelete, products, newItemArticle);
 }
 
-
-function getTotalPrice(quantity){
+function getTotalPrice(products){
     let totalQuantityDisplay = document.getElementById("totalQuantity");
     let totalPriceDisplay = document.getElementById("totalPrice");
 
-    totalPrice += (singleProduct.price * quantity);
-    totalQuantity += quantity;
+    totalPrice += (products.price * products.quantity);
+    totalQuantity += products.quantity;
 
     totalQuantityDisplay.innerText = totalQuantity;
     totalPriceDisplay.innerText = totalPrice
-    //console.log(totalPrice + " - " + totalQuantity);
+    //console.log(totalPrice + " - " + totalQuantity);    
+}
 
 
+function checkButtonDelete(buttonDelete, products, article){    
+    buttonDelete.addEventListener("click", function(){
+        //console.log(products.id + " - " + products.color + " - " + products.quantity);
+        let productFindIndex = cart.findIndex(cartSearch => cartSearch.id == products.id && cartSearch.color == products.color);
+        //console.log(productFindIndex);
+        cart.splice(productFindIndex, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        //console.log(cart);
+        cartDisplaySection.removeChild(article);
+        //location.reload();
+    })
 }
 
 
