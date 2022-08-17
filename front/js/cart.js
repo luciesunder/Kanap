@@ -1,8 +1,6 @@
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let cartDisplaySection = document.getElementById("cart__items");
-let singleProduct = [];
-let totalPrice = 0;
-let totalQuantity = 0;
+let products = [];
 
 for (let i = 0; i < cart.length; i++){
     let id = cart[i].id;
@@ -15,21 +13,21 @@ for (let i = 0; i < cart.length; i++){
     })
     .then(function(product){
         const productInfo = {id: id, color: color, quantity: quantity, name: product.name, price: product.price, img: product.imageUrl, alt: product.altTxt};   
-        singleProduct.push(productInfo);
-        displayCart(singleProduct[i]);
-        getTotalPrice(singleProduct[i]);        
+        products.push(productInfo);
+        displayCart(products[i]);
+        getTotalPrice();       
     })
     .catch(function(error){
         console.error(error);
     })
 }
 
-function displayCart(products){
-    //console.log(products.id);
+function displayCart(singleProduct){
+    //console.log(singleProduct.price);
     let newItemArticle = document.createElement("article");
     newItemArticle.classList.add("cart__item");
-    newItemArticle.setAttribute("data-id", products.id);
-    newItemArticle.setAttribute("data-color", products.color);
+    newItemArticle.setAttribute("data-id", singleProduct.id);
+    newItemArticle.setAttribute("data-color", singleProduct.color);
     cartDisplaySection.appendChild(newItemArticle);
 
     let newItemDivImg = document.createElement('div');
@@ -37,8 +35,8 @@ function displayCart(products){
     newItemArticle.appendChild(newItemDivImg);
 
     let newItemImg = document.createElement('img');
-    newItemImg.setAttribute("src", products.img);
-    newItemImg.setAttribute("alt", products.alt);
+    newItemImg.setAttribute("src", singleProduct.img);
+    newItemImg.setAttribute("alt", singleProduct.alt);
     newItemDivImg.appendChild(newItemImg);
 
     let newItemDivContent = document.createElement('div');
@@ -50,15 +48,15 @@ function displayCart(products){
     newItemDivContent.appendChild(newItemDivDescription);
 
     let newItemHeading = document.createElement("h2");
-    newItemHeading.innerText = products.name;
+    newItemHeading.innerText = singleProduct.name;
     newItemDivDescription.appendChild(newItemHeading);
 
     let newItemParagraphColor = document.createElement("p");
-    newItemParagraphColor.innerHTML = products.color;
+    newItemParagraphColor.innerHTML = singleProduct.color;
     newItemDivDescription.appendChild(newItemParagraphColor);
 
     let newItemParagraphPrice = document.createElement("p");
-    newItemParagraphPrice.innerHTML = products.price + " €";
+    newItemParagraphPrice.innerHTML = singleProduct.price + " €";
     newItemDivDescription.appendChild(newItemParagraphPrice);
 
     let newItemDivContentSetting = document.createElement('div');
@@ -79,7 +77,7 @@ function displayCart(products){
     newItemInputQuantity.setAttribute("name", "itemQuantity");
     newItemInputQuantity.setAttribute("min", "1");
     newItemInputQuantity.setAttribute("max", "100");
-    newItemInputQuantity.setAttribute("value", products.quantity);
+    newItemInputQuantity.setAttribute("value", singleProduct.quantity);
     newItemDivQuantity.appendChild(newItemInputQuantity);
 
     let newItemDivDelete = document.createElement("div");
@@ -91,33 +89,33 @@ function displayCart(products){
     newItemParagraphDelete.innerText = "Supprimer";
     newItemDivDelete.appendChild(newItemParagraphDelete);
 
-    checkButtonDelete(newItemParagraphDelete, products, newItemArticle);
+    checkButtonDelete(newItemParagraphDelete, products, singleProduct, newItemArticle);
 }
 
-function getTotalPrice(products){
+function getTotalPrice(){
+    let totalPrice = 0;
+    let totalQuantity = 0;
     let totalQuantityDisplay = document.getElementById("totalQuantity");
     let totalPriceDisplay = document.getElementById("totalPrice");
 
-    totalPrice += (products.price * products.quantity);
-    totalQuantity += products.quantity;
+    for (let p = 0; p < products.length; p++) {
+        //console.log(products[p]);
+        totalPrice += products[p].price * products[p].quantity;
+        totalQuantity += products[p].quantity;
+    }
 
+    totalPriceDisplay.innerText = totalPrice;
     totalQuantityDisplay.innerText = totalQuantity;
-    totalPriceDisplay.innerText = totalPrice
-    //console.log(totalPrice + " - " + totalQuantity);    
 }
 
-
-function checkButtonDelete(buttonDelete, products, article){    
+function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
     buttonDelete.addEventListener("click", function(){
-        //console.log(products.id + " - " + products.color + " - " + products.quantity);
-        let productFindIndex = cart.findIndex(cartSearch => cartSearch.id == products.id && cartSearch.color == products.color);
-        //console.log(productFindIndex);
-        cart.splice(productFindIndex, 1);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        //console.log(cart);
-        cartDisplaySection.removeChild(article);
-        //location.reload();
+        let productFindIndex = products.findIndex(cartSearch => cartSearch.id == singleProduct.id && cartSearch.color == singleProduct.color);
+        
+        products.splice(productFindIndex, 1);
+        localStorage.setItem("cart", JSON.stringify(products));
+        getTotalPrice();
+        cartDisplaySection.removeChild(articleDiv);
     })
+    
 }
-
-
