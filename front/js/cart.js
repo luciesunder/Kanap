@@ -90,6 +90,7 @@ function displayCart(singleProduct){
     newItemDivDelete.appendChild(newItemParagraphDelete);
 
     checkButtonDelete(newItemParagraphDelete, products, singleProduct, newItemArticle);
+    checkquantityUpdate(newItemInputQuantity, singleProduct, products);
 }
 
 function getTotalPrice(){
@@ -111,11 +112,30 @@ function getTotalPrice(){
 function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
     buttonDelete.addEventListener("click", function(){
         let productFindIndex = products.findIndex(cartSearch => cartSearch.id == singleProduct.id && cartSearch.color == singleProduct.color);
-        
+
         products.splice(productFindIndex, 1);
         localStorage.setItem("cart", JSON.stringify(products));
         getTotalPrice();
         cartDisplaySection.removeChild(articleDiv);
+    })   
+}
+
+function checkquantityUpdate(inputQuantity, singleProduct, products){
+    inputQuantity.addEventListener("change", function(event){
+        //console.log(singleProduct.id + " - " + singleProduct.quantity + " - " + event.target.value);
+        let newQuantity = event.target.value;
+        if (newQuantity <= 0 || newQuantity > 100){
+            alert ("Merci de sélectionner une quantité valide.");
+           event.target.value = singleProduct.quantity;            
+        }
+        else{
+            newQuantity = parseInt(event.target.value);
+            //console.log(newQuantity);
+            let productFindIndex = products.findIndex(cartSearch => cartSearch.id == singleProduct.id && cartSearch.color == singleProduct.color);
+            products[productFindIndex].quantity = newQuantity; 
+            localStorage.setItem("cart", JSON.stringify(products));
+            getTotalPrice();
+        }
+        
     })
-    
 }
