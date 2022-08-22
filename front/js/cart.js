@@ -220,3 +220,20 @@ function checkingForm(){
 }
 
 checkingForm();
+
+function isFormValid(){
+    let userContact = {firstName: userFirstName.value, lastName: userLastName.value, address: userAddress.value, city: userCity.value, email: userEmail.value};
+    if (formFirstName.test(userFirstName.value) && formLastName.test(userLastName.value) 
+        && formAdress.test(userAddress.value) && formCity.test(userCity.value) && formEmail.test(userEmail.value)){
+        //placeOrder(userContact);
+    }
+    else{
+        console.log("formulaire invalide");
+    }
+}
+
+const commandButton = document.getElementById("order");
+commandButton.addEventListener("click", function(e){
+    e.preventDefault();
+    isFormValid();
+});
