@@ -90,7 +90,7 @@ function displayCart(singleProduct){
     newItemDivDelete.appendChild(newItemParagraphDelete);
 
     checkButtonDelete(newItemParagraphDelete, products, singleProduct, newItemArticle);
-    checkquantityUpdate(newItemInputQuantity, singleProduct, products);
+    checkQuantityUpdate(newItemInputQuantity, singleProduct, products);
 }
 
 function getTotalPrice(){
@@ -120,13 +120,13 @@ function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
     })   
 }
 
-function checkquantityUpdate(inputQuantity, singleProduct, products){
+function checkQuantityUpdate(inputQuantity, singleProduct, products){
     inputQuantity.addEventListener("change", function(event){
         //console.log(singleProduct.id + " - " + singleProduct.quantity + " - " + event.target.value);
         let newQuantity = event.target.value;
         if (newQuantity <= 0 || newQuantity > 100){
             alert ("Merci de sélectionner une quantité valide.");
-           event.target.value = singleProduct.quantity;            
+            event.target.value = singleProduct.quantity;            
         }
         else{
             newQuantity = parseInt(event.target.value);
@@ -136,6 +136,17 @@ function checkquantityUpdate(inputQuantity, singleProduct, products){
             localStorage.setItem("cart", JSON.stringify(products));
             getTotalPrice();
         }
-        
     })
 }
+
+let formFirstName = /^[A-Za-zéè\-s]{2,}$/;
+let formLastName = /^[A-Za-zéè\-s]+$/;
+let formAdress = /^[A-Za-z0-9éèà'\s-]+$/;
+let formCity = /^[A-Za-zéèà'\s-]+$/;
+let formEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+const userFirstName = document.getElementById("firstName");
+const userLastName = document.getElementById("lastName");
+const userAddress = document.getElementById("address");
+const userCity = document.getElementById("city");
+const userEmail = document.getElementById("email");
