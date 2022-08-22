@@ -23,7 +23,6 @@ for (let i = 0; i < cart.length; i++){
 }
 
 function displayCart(singleProduct){
-    //console.log(singleProduct.price);
     let newItemArticle = document.createElement("article");
     newItemArticle.classList.add("cart__item");
     newItemArticle.setAttribute("data-id", singleProduct.id);
@@ -100,7 +99,6 @@ function getTotalPrice(){
     let totalPriceDisplay = document.getElementById("totalPrice");
 
     for (let p = 0; p < products.length; p++) {
-        //console.log(products[p]);
         totalPrice += products[p].price * products[p].quantity;
         totalQuantity += products[p].quantity;
     }
@@ -122,7 +120,6 @@ function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
 
 function checkQuantityUpdate(inputQuantity, singleProduct, products){
     inputQuantity.addEventListener("change", function(event){
-        //console.log(singleProduct.id + " - " + singleProduct.quantity + " - " + event.target.value);
         let newQuantity = event.target.value;
         if (newQuantity <= 0 || newQuantity > 100){
             alert ("Merci de sélectionner une quantité valide.");
@@ -225,11 +222,35 @@ function isFormValid(){
     let userContact = {firstName: userFirstName.value, lastName: userLastName.value, address: userAddress.value, city: userCity.value, email: userEmail.value};
     if (formFirstName.test(userFirstName.value) && formLastName.test(userLastName.value) 
         && formAdress.test(userAddress.value) && formCity.test(userCity.value) && formEmail.test(userEmail.value)){
-        //placeOrder(userContact);
+        placeOrder(userContact);
     }
     else{
-        console.log("formulaire invalide");
+        alert("Erreur : Merci de corriger les champs incorrects.");
     }
+}
+
+function placeOrder(contact){
+    let productId = [];
+    for (let i = 0; i < products.length; i++){
+        productId.push(products[i].id);        
+    }
+    let userCommand = {contact: contact, products: productId};
+    fetch ("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+        body: JSON.stringify(userCommand),
+    })
+    .then(function(response){
+        return response.json();       
+    })
+    .then(function(command){
+        window.location.href = "confirmation.html?orderId="+command.orderId;
+    })
+    .catch(function(error){
+        console.error(error);
+    })
 }
 
 const commandButton = document.getElementById("order");
