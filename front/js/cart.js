@@ -150,3 +150,73 @@ const userLastName = document.getElementById("lastName");
 const userAddress = document.getElementById("address");
 const userCity = document.getElementById("city");
 const userEmail = document.getElementById("email");
+
+function checkingFirstName(){
+    userFirstName.addEventListener("change", function(){
+        let errorMessage = document.getElementById("firstNameErrorMsg");
+        if (formFirstName.test(userFirstName.value)){
+            errorMessage.innerText = "";
+        }
+        else{
+            errorMessage.innerText = "Format incorrect";
+        }
+    });
+}
+
+function checkingLastName(){
+    userLastName.addEventListener("change", function(){
+        let errorMessage = document.getElementById("lastNameErrorMsg");
+        if (formLastName.test(userLastName.value)){
+            errorMessage.innerText = "";
+        }
+        else{
+            errorMessage.innerText = "Format incorrect";
+        }
+    });
+}
+
+function checkingAddress(){
+    userAddress.addEventListener("change", function(){
+        let errorMessage = document.getElementById("addressErrorMsg");
+        if (formAdress.test(userAddress.value)){
+            errorMessage.innerText = "";
+        }
+        else{
+            errorMessage.innerText = "Format incorrect";
+        }
+    });
+}
+
+function checkingCity(){
+    userCity.addEventListener("change", function(){
+        let errorMessage = document.getElementById("cityErrorMsg");
+        if (formCity.test(userCity.value)){
+            errorMessage.innerText = "";
+        }
+        else{
+            errorMessage.innerText = "Format incorrect";
+        }
+    });
+}
+
+function checkingEmail(){
+    userEmail.addEventListener("change", function(){
+        let errorMessage = document.getElementById("emailErrorMsg");
+        if (formEmail.test(userEmail.value)){
+            errorMessage.innerText = "";
+        }
+        else{
+            errorMessage.innerText = "Format incorrect";
+        }
+    });
+}
+
+function checkingForm(){
+    checkingFirstName();
+    checkingLastName();
+    checkingAddress();
+    checkingCity();
+    checkingEmail();
+}
+
+checkingForm();
