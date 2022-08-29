@@ -1,6 +1,6 @@
 let productList = [];
 
-//collect all products
+//collect all products from the api
 fetch ("http://localhost:3000/api/products/")
     .then(function(response){
         return response.json()

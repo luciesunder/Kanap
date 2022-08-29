@@ -86,9 +86,12 @@ function addProductToCart(id, color, quantity){
         cart[productFindIndex].quantity += quantity;        
     }
     else {
-        cart.push(addToCart);        
+        cart.push(addToCart);  
+           
     };
+    
     //add to localstorage
     localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Le produit a bien été ajouté au panier"); 
     console.log(cart);
 }

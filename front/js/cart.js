@@ -2,11 +2,13 @@ let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let cartDisplaySection = document.getElementById("cart__items");
 let products = [];
 
+//collect each product in localstorage
 for (let i = 0; i < cart.length; i++){
     let id = cart[i].id;
     let color = cart[i].color;
-    let quantity = cart[i].quantity;     
+    let quantity = cart[i].quantity;  
 
+    //collect the product from the api with the corresponding ID
     fetch ("http://localhost:3000/api/products/" + id)
     .then(function(response){
         return response.json()
@@ -22,6 +24,7 @@ for (let i = 0; i < cart.length; i++){
     })
 }
 
+//create DOM elements for a product
 function displayCart(singleProduct){
     let newItemArticle = document.createElement("article");
     newItemArticle.classList.add("cart__item");
@@ -92,6 +95,7 @@ function displayCart(singleProduct){
     checkQuantityUpdate(newItemInputQuantity, singleProduct, products);
 }
 
+//calculate and display the total price and total quantity
 function getTotalPrice(){
     let totalPrice = 0;
     let totalQuantity = 0;
@@ -107,17 +111,19 @@ function getTotalPrice(){
     totalQuantityDisplay.innerText = totalQuantity;
 }
 
+//listen if the button delete of a product in the cart is being clicked
 function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
     buttonDelete.addEventListener("click", function(){
         let productFindIndex = products.findIndex(cartSearch => cartSearch.id == singleProduct.id && cartSearch.color == singleProduct.color);
 
-        products.splice(productFindIndex, 1);
-        localStorage.setItem("cart", JSON.stringify(products));
+        products.splice(productFindIndex, 1); //remove elements in products array
+        localStorage.setItem("cart", JSON.stringify(products)); //update localstorage
         getTotalPrice();
-        cartDisplaySection.removeChild(articleDiv);
+        cartDisplaySection.removeChild(articleDiv); //remove DOM element
     })   
 }
 
+//listen if the quantity is being changed and update the total price and quantity if so.
 function checkQuantityUpdate(inputQuantity, singleProduct, products){
     inputQuantity.addEventListener("change", function(event){
         let newQuantity = event.target.value;
@@ -129,13 +135,14 @@ function checkQuantityUpdate(inputQuantity, singleProduct, products){
             newQuantity = parseInt(event.target.value);
             //console.log(newQuantity);
             let productFindIndex = products.findIndex(cartSearch => cartSearch.id == singleProduct.id && cartSearch.color == singleProduct.color);
-            products[productFindIndex].quantity = newQuantity; 
+            products[productFindIndex].quantity = newQuantity;
             localStorage.setItem("cart", JSON.stringify(products));
             getTotalPrice();
         }
     })
 }
 
+//regex for the form
 let formFirstName = /^[A-Za-zéè\-s]{2,}$/;
 let formLastName = /^[A-Za-zéè\-s]+$/;
 let formAdress = /^[A-Za-z0-9éèà'\s-]+$/;
@@ -148,6 +155,7 @@ const userAddress = document.getElementById("address");
 const userCity = document.getElementById("city");
 const userEmail = document.getElementById("email");
 
+//check if the user input first name matches its regex
 function checkingFirstName(){
     userFirstName.addEventListener("change", function(){
         let errorMessage = document.getElementById("firstNameErrorMsg");
@@ -160,6 +168,7 @@ function checkingFirstName(){
     });
 }
 
+//check if the user input last name matches its regex
 function checkingLastName(){
     userLastName.addEventListener("change", function(){
         let errorMessage = document.getElementById("lastNameErrorMsg");
@@ -172,6 +181,7 @@ function checkingLastName(){
     });
 }
 
+//check if the user input address matches its regex
 function checkingAddress(){
     userAddress.addEventListener("change", function(){
         let errorMessage = document.getElementById("addressErrorMsg");
@@ -184,6 +194,7 @@ function checkingAddress(){
     });
 }
 
+//check if the user input city matches its regex
 function checkingCity(){
     userCity.addEventListener("change", function(){
         let errorMessage = document.getElementById("cityErrorMsg");
@@ -196,6 +207,7 @@ function checkingCity(){
     });
 }
 
+//check if the user input email matches its regex
 function checkingEmail(){
     userEmail.addEventListener("change", function(){
         let errorMessage = document.getElementById("emailErrorMsg");
@@ -208,6 +220,7 @@ function checkingEmail(){
     });
 }
 
+//call all the functions that check the input form
 function checkingForm(){
     checkingFirstName();
     checkingLastName();
@@ -218,6 +231,7 @@ function checkingForm(){
 
 checkingForm();
 
+//check if all the form inputs match their regex and if so create a contact object with the user info
 function isFormValid(){
     let userContact = {firstName: userFirstName.value, lastName: userLastName.value, address: userAddress.value, city: userCity.value, email: userEmail.value};
     if (formFirstName.test(userFirstName.value) && formLastName.test(userLastName.value) 
@@ -229,12 +243,13 @@ function isFormValid(){
     }
 }
 
+//send the product and user info to the api
 function placeOrder(contact){
     let productId = [];
     for (let i = 0; i < products.length; i++){
         productId.push(products[i].id);        
     }
-    let userCommand = {contact: contact, products: productId};
+    let userCommand = {contact: contact, products: productId};//create object with contact and product info
     fetch ("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
@@ -246,13 +261,14 @@ function placeOrder(contact){
         return response.json();       
     })
     .then(function(command){
-        window.location.href = "confirmation.html?orderId="+command.orderId;
+        window.location.href = "confirmation.html?orderId="+command.orderId; //collect the order id
     })
     .catch(function(error){
         console.error(error);
     })
 }
 
+//check if the form is valid when the user click the command button
 const commandButton = document.getElementById("order");
 commandButton.addEventListener("click", function(e){
     e.preventDefault();
