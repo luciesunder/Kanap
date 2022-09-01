@@ -143,9 +143,9 @@ function checkQuantityUpdate(inputQuantity, singleProduct, products){
 }
 
 //regex for the form
-let formFirstName = /^[A-Za-zéè\-s]{2,}$/;
-let formLastName = /^[A-Za-zéè\-s]+$/;
-let formAdress = /^[A-Za-z0-9éèà'\s-]+$/;
+let formFirstName = /^[A-Za-zéè\s-]{2,}$/;
+let formLastName = /^[A-Za-zéè\s-]{2,}$/;
+let formAdress = /^[0-9A-Za-zéèà'\s-]+$/;
 let formCity = /^[A-Za-zéèà'\s-]+$/;
 let formEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
