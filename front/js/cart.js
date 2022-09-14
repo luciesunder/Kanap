@@ -1,29 +1,34 @@
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let cartDisplaySection = document.getElementById("cart__items");
 let products = [];
+let emptyCartMessage = document.querySelector("#cartAndFormContainer h1");
 
 //collect each product in localstorage
-for (let i = 0; i < cart.length; i++){
-    let id = cart[i].id;
-    let color = cart[i].color;
-    let quantity = cart[i].quantity;  
+if (cart.length==0){    
+    emptyCartMessage.innerText = "Votre panier est vide"; 
+    disableForm();  
+}else{
+    for (let i = 0; i < cart.length; i++){
+        let id = cart[i].id;
+        let color = cart[i].color;
+        let quantity = cart[i].quantity;  
 
-    //collect the product from the api with the corresponding ID
-    fetch ("http://localhost:3000/api/products/" + id)
-    .then(function(response){
-        return response.json()
-    })
-    .then(function(product){
-        const productInfo = {id: id, color: color, quantity: quantity, name: product.name, price: product.price, img: product.imageUrl, alt: product.altTxt};   
-        products.push(productInfo);
-        displayCart(products[i]);
-        getTotalPrice();       
-    })
-    .catch(function(error){
-        console.error(error);
-    })
+        //collect the product from the api with the corresponding ID
+        fetch ("http://localhost:3000/api/products/" + id)
+        .then(function(response){
+            return response.json()
+        })
+        .then(function(product){
+            const productInfo = {id: id, color: color, quantity: quantity, name: product.name, price: product.price, img: product.imageUrl, alt: product.altTxt};   
+            products.push(productInfo);
+            displayCart(products[i]);
+            getTotalPrice();       
+        })
+        .catch(function(error){
+            console.error(error);
+        })
+    }
 }
-
 //create DOM elements for a product
 function displayCart(singleProduct){
     let newItemArticle = document.createElement("article");
@@ -115,11 +120,14 @@ function getTotalPrice(){
 function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
     buttonDelete.addEventListener("click", function(){
         let productFindIndex = products.findIndex(cartSearch => cartSearch.id == singleProduct.id && cartSearch.color == singleProduct.color);
-
         products.splice(productFindIndex, 1); //remove elements in products array
         localStorage.setItem("cart", JSON.stringify(products)); //update localstorage
         getTotalPrice();
-        cartDisplaySection.removeChild(articleDiv); //remove DOM element
+        cartDisplaySection.removeChild(articleDiv); //remove DOM element  
+        if (products.length==0){
+            emptyCartMessage.innerText = "Votre panier est vide";
+            disableForm(); 
+        }
     })   
 }
 
@@ -127,7 +135,7 @@ function checkButtonDelete(buttonDelete, products, singleProduct, articleDiv){
 function checkQuantityUpdate(inputQuantity, singleProduct, products){
     inputQuantity.addEventListener("change", function(event){
         let newQuantity = event.target.value;
-        if (newQuantity <= 0 || newQuantity > 100){
+        if (newQuantity <= 0 || newQuantity > 100 || isNaN(quantitySelected)){
             alert ("Merci de sélectionner une quantité valide.");
             event.target.value = singleProduct.quantity;            
         }
@@ -140,6 +148,12 @@ function checkQuantityUpdate(inputQuantity, singleProduct, products){
             getTotalPrice();
         }
     })
+}
+
+//hide the form if the cart is empty
+function disableForm(){
+    const formDisplay = document.querySelector(".cart__order");
+    formDisplay.style.display = "none";
 }
 
 //regex for the form
@@ -253,9 +267,9 @@ function placeOrder(contact){
     fetch ("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json;charset=utf-8'
+            'Content-Type': 'application/json;charset=utf-8' //inform web service it will receive JSON
           },
-        body: JSON.stringify(userCommand),
+        body: JSON.stringify(userCommand), //convert object in JSON format
     })
     .then(function(response){
         return response.json();       

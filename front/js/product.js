@@ -58,14 +58,14 @@ const cartButton = document.getElementById("addToCart");
 cartButton.addEventListener("click", function(){
    
     let colorSelected = document.getElementById("colors").value;
-    let quantitySelected = parseInt(document.getElementById("quantity").value);    
-    
+    let quantitySelected = parseInt(document.getElementById("quantity").value); 
+    //console.log("quantité"+quantitySelected);   
     //check if a color has been selected
     if (!colorSelected){
         alert ("Merci de sélectionner une couleur.");
     }
     //check if a valid quantity has been chosen
-    else if (quantitySelected <= 0 || quantitySelected > 100 ){
+    else if (quantitySelected <= 0 || quantitySelected > 100 || isNaN(quantitySelected) ){
         document.getElementById("quantity").value = 0; // ?
         alert ("Merci de sélectionner une quantité valide.");
     } 
